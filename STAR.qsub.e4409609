@@ -1,0 +1,3 @@
+[W::sam_hdr_read] bgzf_check_EOF: Invalid argument
+[E::bam_hdr_read] invalid BAM binary header
+/var/spool/sge/scc-na1/job_scripts/4409609: line 15: 29886 Segmentation fault      STAR --runThreadN 16 --genomeDir $GENOMEDIR --readFilesCommand zcat --readFilesIn /project/bf528/project_3/samples/SRR1178004_1.fastq.gz /project/bf528/project_3/samples/SRR1178004_2.fastq.gz --outSAMtype BAM SortedByCoordinate --outFileNamePrefix ./star_out/
