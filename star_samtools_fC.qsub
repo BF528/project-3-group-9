@@ -1,0 +1,57 @@
+#!/bin/bash -l
+
+#$ -P bf528
+#$ -cwd
+#$ -pe omp 16
+#
+source /etc/bashrc
+
+module load gcc 
+module load star/2.6.0c
+
+RUN=SRR1178008
+#RUN=SRR1178009
+#RUN=SRR1178010
+#RUN=SRR1178014
+#RUN=SRR1178021
+#RUN=SRR1178047
+#RUN=SRR1177981
+#RUN=SRR1177982
+#RUN=SRR1177983
+
+GENOMEDIR=/project/bf528/project_3/reference/rn4_STAR/
+SAMPLEDIR=/project/bf528/project_3/samples
+
+# Load genome so it doesn't take up too much memory
+STAR --genomeLoad LoadAndExit --genomeDir $GENOMEDIR
+
+# genomeDir: Where the genome index is stored (created by prof)
+# readFilesCommand: Need this because fastq files are compressed (.gz)
+# readFilesIn: all of the fastq files, all the read1 then all the read2
+
+STAR  --runThreadN 16 --genomeDir $GENOMEDIR --readFilesCommand zcat --readFilesIn $SAMPLEDIR/$RUN\_1.fastq.gz $SAMPLEDIR/$RUN\_2.fastq.gz --outSAMtype BAM Unsorted --outFileNamePrefix ./star_out/
+
+STAR --genomeLoad Remove --genomeDir $GENOMEDIR
+
+# Clean up star output
+mv star_out/Log.final.out star_out/$RUN\.Log.final.out 
+mv star_out/Log.out star_out/$RUN\.Log.out 
+mv star_out/Log.progress.out star_out/$RUN\.Log.progress.out 
+mv star_out/SJ.out.tab star_out/$RUN\.SJ.out.tab 
+
+module load samtools
+
+samtools sort star_out/Aligned.out.bam -o star_out/Aligned.sorted.out.bam
+
+#rm star_out/Aligned.out.bam
+
+INFILE=star_out/Aligned.sorted.out.bam
+
+BASENAME=`basename $INFILE .bam`
+
+module load subread/1.6.2
+
+GTF=/project/bf528/project_3/reference/rn4_refGene_20180308.gtf
+OUT=featureCounts_out/counts_$RUN
+featureCounts -T 16 -a $GTF -o $OUT $INFILE
+

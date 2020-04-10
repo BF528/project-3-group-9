@@ -1,0 +1,23 @@
+#!/bin/bash -l
+
+#$ -P bf528
+#$ -cwd
+#$ -pe omp 16
+
+source /etc/bashrc
+
+#INFILE=/project/bf528/project_3/samples/SRR1178029__rn4_STAR__sortedByCoord.bam
+#INFILE=/project/bf528/project_3/samples/SRR1178035__rn4_STAR__sortedByCoord.bam 
+#INFILE=/project/bf528/project_3/samples/SRR1178039__rn4_STAR__sortedByCoord.bam 
+#INFILE=/project/bf528/project_3/samples/SRR1178055__rn4_STAR__sortedByCoord.bam 
+#INFILE=/project/bf528/project_3/samples/SRR1178074__rn4_STAR__sortedByCoord.bam 
+INFILE=/project/bf528/project_3/samples/SRR1178075__rn4_STAR__sortedByCoord.bam
+# $1 is the input file
+#INFILE=$1
+BASENAME=`basename $INFILE .bam`
+
+module load subread/1.6.2
+
+GTF=/project/bf528/project_3/reference/rn4_refGene_20180308.gtf
+OUT=featureCounts_out/counts_$BASENAME
+featureCounts -T 16 -a $GTF -o $OUT $INFILE

@@ -1,0 +1,11 @@
+#!/bin/bash -l
+
+#$ -P bf528
+#$ -cwd
+#$ -pe omp 16
+#
+source /etc/bashrc
+
+module load samtools
+
+samtools sort Aligned.out.bam -o Aligned.sorted.out.bam

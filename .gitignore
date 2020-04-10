@@ -1,3 +1,5 @@
+*.sam
 fastqc_out/
-star_out/
+star_out/*.bam
 samples/
+_STARtmp/
